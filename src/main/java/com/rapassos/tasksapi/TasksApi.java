@@ -1,13 +1,13 @@
-package com.rapassos.tasks_api_java;
+package com.rapassos.tasksapi;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TasksApiJavaApplication {
+public class TasksApi {
 
 	public static void main(String[] args) {
-		SpringApplication.run(TasksApiJavaApplication.class, args);
+		SpringApplication.run(TasksApi.class, args);
 	}
 
 }

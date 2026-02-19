@@ -1,4 +1,4 @@
-package com.rapassos.tasks_api_java.dto;
+package com.rapassos.tasksapi.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

@@ -1,8 +1,8 @@
-package com.rapassos.tasks_api_java.controller;
+package com.rapassos.tasksapi.controller;
 
-import com.rapassos.tasks_api_java.dto.TaskRequestDTO;
-import com.rapassos.tasks_api_java.model.Task;
-import com.rapassos.tasks_api_java.service.TaskService;
+import com.rapassos.tasksapi.dto.TaskRequestDTO;
+import com.rapassos.tasksapi.model.Task;
+import com.rapassos.tasksapi.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

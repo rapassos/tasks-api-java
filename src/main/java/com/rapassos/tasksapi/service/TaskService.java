@@ -1,8 +1,8 @@
-package com.rapassos.tasks_api_java.service;
+package com.rapassos.tasksapi.service;
 
-import com.rapassos.tasks_api_java.dto.TaskRequestDTO;
-import com.rapassos.tasks_api_java.model.Task;
-import com.rapassos.tasks_api_java.repository.TaskRepository;
+import com.rapassos.tasksapi.dto.TaskRequestDTO;
+import com.rapassos.tasksapi.model.Task;
+import com.rapassos.tasksapi.repository.TaskRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

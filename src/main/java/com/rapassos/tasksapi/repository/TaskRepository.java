@@ -1,6 +1,6 @@
-package com.rapassos.tasks_api_java.repository;
+package com.rapassos.tasksapi.repository;
 
-import com.rapassos.tasks_api_java.model.Task;
+import com.rapassos.tasksapi.model.Task;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

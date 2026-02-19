@@ -1,4 +1,4 @@
-package com.rapassos.tasks_api_java.model;
+package com.rapassos.tasksapi.model;
 
 import jakarta.persistence.*;
 import lombok.*;
