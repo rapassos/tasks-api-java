@@ -1,97 +1,89 @@
-# 🚀 Tasks API (Java)
+# Tasks API 🚀
 
-> **API RESTful corporativa para gerenciamento de tarefas, desenvolvida como modelo de referência para boas práticas em Spring Boot 3, arquitetura em camadas e alta cobertura de testes automatizados.**
+Uma API REST robusta e simplificada para gerenciamento de tarefas (To-Do List), desenvolvida com o ecossistema moderno do **Spring Boot 3 / Spring 7** e **Java 17**. Este projeto foi estruturado seguindo as melhores práticas de mercado, incluindo arquitetura em camadas, validação de dados, testes unitários integrados e documentação automatizada.
 
-[![Java Version](https://img.shields.io/badge/Java-17%2F21-ED8B00?style=flat-pro&logo=openjdk&logoColor=white)](https://openjdk.org/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?style=flat-pro&logo=spring&logoColor=white)](https://spring.io/projects/spring-boot)
-[![Testing](https://img.shields.io/badge/Tests-JUnit%205%20%2B%20Mockito-4CI51C?style=flat-pro)](https://junit.org/junit5/)
-[![Lombok](https://img.shields.io/badge/Lombok-Boilerplate%20Free-red?style=flat-pro)](https://projectlombok.org/)
+## 🛠️ Tecnologias Utilizadas
 
----
+- **Java 17** (LTS)
+- **Spring Boot 3.x / Spring 7.x**
+- **Spring Data JPA** (Persistência de dados)
+- **H2 Database** (Banco de dados em memória para testes rápidos)
+- **Lombok** (Produtividade e redução de código boilerplate)
+- **Jakarta Validation** (Validação de payloads de entrada)
+- **Springdoc OpenAPI 3 (Swagger UI)** (Documentação interativa da API)
+- **JUnit 5 & Mockito** (Testes unitários e simulação de camadas)
+- **Maven** (Gerenciamento de dependências e build)
 
-## 🎯 Propósito do Projeto
+## 🏗️ Arquitetura do Projeto
 
-Este projeto vai além de um CRUD convencional. Ele foi desenvolvido com o objetivo de servir como um **padrão de referência (Boilerplate/Template)** para APIs prontas para produção. O foco principal foi aplicar os princípios do **SOLID**, garantir o encapsulamento estrito das regras de negócio e demonstrar padrões avançados de tratamento de erros e testes de software no ecossistema Java moderno.
+O projeto adota uma arquitetura em camadas bem definida para garantir a separação de responsabilidades e facilidade de manutenção:
 
----
+- **`model`**: Entidades mapeadas para o banco de dados (`Task`).
+- **`dto`**: Objetos de transferência de dados (`TaskRequestDTO`) utilizando *Java Records* para imutabilidade e validação com `@NotBlank`.
+- **`repository`**: Interface de comunicação com o banco de dados via Spring Data JPA.
+- **`service`**: Camada de regras de negócio com controle transacional (`@Transactional`).
+- **`controller`**: Exposição dos endpoints REST e manipulação de respostas HTTP (`ResponseEntity`).
 
-## 🏛️ Arquitetura e Organização de Pacotes
+## 🛣️ Endpoints da API
 
-A aplicação adota uma **Arquitetura em Camadas (Layered Architecture)** bem definida, garantindo o baixo acoplamento e facilitando a manutenção do código.
+A API expõe as seguintes rotas sob o contexto `/api/tasks`:
 
-    src/main/java/com/rafaelpassos/tasksapi/
-    ├── controllers/      # Camada de Exposição: Endpoints REST e validação de entrada
-    ├── services/         # Camada de Negócio: Onde residem as regras e fluxos lógicos
-    ├── repositories/     # Camada de Persistência: Interfaces Spring Data JPA
-    ├── models/           # Camada de Domínio: Entidades JPA (mapeamento do banco)
-    ├── dtos/             # Data Transfer Objects: Tráfego seguro de dados entre camadas
-    └── exceptions/       # Tratamento de Erros: Exceções customizadas e Global Handler
+| Método | Endpoint | Descrição | Status HTTP Esperado |
+| :--- | :--- | :--- | :--- |
+| **GET** | `/api/tasks` | Lista todas as tarefas | `200 OK` |
+| **GET** | `/api/tasks/{id}` | Busca uma tarefa por ID | `200 OK` ou `404 Not Found` |
+| **POST** | `/api/tasks` | Cria uma nova tarefa | `201 Created` ou `400 Bad Request` |
+| **PUT** | `/api/tasks/{id}` | Atualiza uma tarefa existente | `200 OK` ou `404 Not Found` |
+| **DELETE** | `/api/tasks/{id}` | Remove uma tarefa do banco | `204 No Content` ou `404 Not Found` |
 
-### 💡 Destaques de Design Pattern aplicados:
+### Exemplo de Payload para Criação (`POST`):
+```json
+{
+  "title": "Estudar Spring Boot 3",
+  "description": "Finalizar a documentação do Swagger UI no projeto prático.",
+  "completed": false
+}
+```
 
-* **Padrão DTO:** Isolamento completo das entidades do banco de dados na camada de controle, evitando vazamento de dados ou acoplamento precoce com a API externa.
-* **Global Exception Handler (@ControllerAdvice):** Centralização de todos os erros da API. Qualquer exceção de negócio resulta em um payload JSON padronizado com códigos de status HTTP semânticos (400, 404, 422).
-* **Bean Validation:** Uso rigoroso de anotações (@NotBlank, @Size, @FutureOrPresent) para garantir a integridade dos dados na entrada.
-* **Lombok Estruturado:** Utilização limpa para eliminação de código boilerplate, mantendo o código conciso e legível.
-
----
-
-## 🧪 Estratégia de Testes Automatizados
-
-O core deste repositório é a sua resiliência. A aplicação foi desenhada para ser altamente testável, utilizando JUnit 5 para a suíte de testes e Mockito para o isolamento completo da camada de serviço através do mock de dependências.
-
-### O que está sendo testado?
-
-* **Testes Unitários de Serviço (Business Logic):** Validação de regras críticas, como o impedimento de editar tarefas concluídas, comportamento correto ao buscar IDs inexistentes (lançamento de ResourceNotFoundException) e fluxos alternativos de falha.
-* **Testes de Integração/Componente (Em progresso):** Validação dos endpoints usando MockMvc para garantir o comportamento correto dos filtros e retornos HTTP.
-
-Para rodar os testes e analisar a cobertura:
-
-    mvn test
-
----
-
-## 🛠️ Stack Tecnológica
-
-* **Linguagem:** Java 17 ou superior
-* **Framework:** Spring Boot 3.x
-* **Persistência:** Spring Data JPA / Hibernate
-* **Banco de Dados:** PostgreSQL (Configuração de produção) / H2 Database (Memória para testes)
-* **Ferramentas auxiliares:** Project Lombok, Jakarta Validation
-
----
-
-## 🔧 Como Executar a API
+## 🚀 Como Executar o Projeto Localmente
 
 ### Pré-requisitos
-* JDK 17 ou 21
-* Maven 3.x
+- JDK 17 instalado.
+- Código clonado em sua máquina local.
 
-### Execução local
+### 1. Clonar e Compilar
+Abra o terminal na raiz do projeto e execute a limpeza e compilação das dependências:
+```bash
+./mvnw clean package -DskipTests
+```
 
-1. Clone o repositório:
+### 2. Rodar a Aplicação
+Para iniciar o servidor Tomcat embutido na porta `8080`:
+```bash
+./mvnw spring-boot:run
+```
 
-    git clone https://github.com/rapassos/tasks_api_java.git
-    cd tasks_api_java
+### 3. Acessar a Documentação Interativa (Swagger)
+Com a aplicação rodando, acesse o painel visual para testar todos os endpoints sem necessidade de ferramentas externas:
+👉 [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
-2. Compile o projeto e baixe as dependências:
+### 4. Acessar o Banco de Dados (H2 Console)
+Para inspecionar as tabelas criadas automaticamente pelo Hibernate em tempo real:
+👉 [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
 
-    mvn clean install
+*Configurações de Acesso:*
+- **JDBC URL:** `jdbc:h2:mem:taskdb`
+- **User Name:** `sa`
+- **Password:** *(deixar em branco)*
 
-3. Execute a aplicação:
+## 🧪 Testes Unitários
 
-    mvn spring-boot:run
+A aplicação conta com uma suíte de testes focada na camada de serviços (`TaskServiceTest`), utilizando **Mockito** para isolar o comportamento do repositório.
 
-A API estará ativa em `http://localhost:8080`.
+Para rodar os testes e validar a integridade do código, execute:
+```bash
+./mvnw test
+```
 
 ---
-
-## Autor
-
-**Rafael Passos** Engenheiro de Software Backend | Especialista em Operações Industriais  
-
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/rapassos)
-[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:rapassos@gmail.com)
-
----
-*Este é um projeto de portfólio focado em demonstrar competências em Engenharia de Software Backend, Java Enterprise e padrões rigorosos de testes automatizados.*
+Desenvolvido por [Rafael Passos](https://github.com/rapassos).
