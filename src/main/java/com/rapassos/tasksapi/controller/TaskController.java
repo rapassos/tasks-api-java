@@ -1,7 +1,7 @@
 package com.rapassos.tasksapi.controller;
 
 import com.rapassos.tasksapi.dto.TaskRequestDTO;
-import com.rapassos.tasksapi.model.Task;
+import com.rapassos.tasksapi.dto.TaskResponseDTO;
 import com.rapassos.tasksapi.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -21,33 +21,28 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getAll() {
+    public List<TaskResponseDTO> getAll() {
         return taskService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getById(@PathVariable Long id) {
-        return taskService.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<TaskResponseDTO> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(taskService.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<Task> create(@RequestBody @Valid TaskRequestDTO data) {
+    public ResponseEntity<TaskResponseDTO> create(@RequestBody @Valid TaskRequestDTO data) {
         return ResponseEntity.status(HttpStatus.CREATED).body(taskService.save(data));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> update(@PathVariable Long id, @RequestBody @Valid TaskRequestDTO data) {
-        return taskService.update(id, data)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<TaskResponseDTO> update(@PathVariable Long id, @RequestBody @Valid TaskRequestDTO data) {
+        return ResponseEntity.ok(taskService.update(id, data));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        return taskService.delete(id)
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
+        taskService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

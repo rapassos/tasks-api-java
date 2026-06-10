@@ -1,6 +1,8 @@
 package com.rapassos.tasksapi.service;
 
 import com.rapassos.tasksapi.dto.TaskRequestDTO;
+import com.rapassos.tasksapi.dto.TaskResponseDTO;
+import com.rapassos.tasksapi.exception.ResourceNotFoundException;
 import com.rapassos.tasksapi.model.Task;
 import com.rapassos.tasksapi.repository.TaskRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,49 +20,47 @@ import static org.mockito.Mockito.*;
 
 class TaskServiceTest {
 
-    @Mock // Cria um simulacro do repositório
+    @Mock
     private TaskRepository taskRepository;
 
-    @InjectMocks // Injeta o mock acima dentro do serviço
+    @InjectMocks
     private TaskService taskService;
 
     @BeforeEach
     void setup() {
-        MockitoAnnotations.openMocks(this); // Inicializa os mocks antes de cada teste
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
     @DisplayName("Deve salvar uma tarefa com sucesso")
     void saveTask_Success() {
-        // Arrange (Configuração)
         TaskRequestDTO dto = new TaskRequestDTO("Estudar Java", "Finalizar testes unitários", false);
+        
+        // Ajustado para usar setters convencionais/Lombok em vez do construtor cheio
         Task task = new Task();
-        task.setTitle(dto.title());
+        task.setId(1L);
+        task.setTitle("Estudar Java");
+        task.setDescription("Finalizar testes unitários");
+        task.setCompleted(false);
 
         when(taskRepository.save(any(Task.class))).thenReturn(task);
 
-        // Act (Ação)
-        Task result = taskService.save(dto);
+        TaskResponseDTO result = taskService.save(dto);
 
-        // Assert (Verificação)
         assertNotNull(result);
-        assertEquals("Estudar Java", result.getTitle());
+        assertEquals(1L, result.id());
+        assertEquals("Estudar Java", result.title());
         verify(taskRepository, times(1)).save(any(Task.class));
     }
 
     @Test
-    @DisplayName("Deve retornar vazio ao tentar atualizar tarefa inexistente")
+    @DisplayName("Deve lançar ResourceNotFoundException ao tentar atualizar tarefa inexistente")
     void updateTask_NotFound() {
-        // Arrange
-        Long id = 1L;
+        Long id = 999L;
         TaskRequestDTO dto = new TaskRequestDTO("Novo Titulo", "Desc", true);
         when(taskRepository.findById(id)).thenReturn(Optional.empty());
 
-        // Act
-        Optional<Task> result = taskService.update(id, dto);
-
-        // Assert
-        assertTrue(result.isEmpty());
+        assertThrows(ResourceNotFoundException.class, () -> taskService.update(id, dto));
         verify(taskRepository, never()).save(any());
     }
 }

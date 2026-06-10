@@ -1,14 +1,14 @@
 package com.rapassos.tasksapi.service;
 
 import com.rapassos.tasksapi.dto.TaskRequestDTO;
+import com.rapassos.tasksapi.dto.TaskResponseDTO;
+import com.rapassos.tasksapi.exception.ResourceNotFoundException;
 import com.rapassos.tasksapi.model.Task;
 import com.rapassos.tasksapi.repository.TaskRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TaskService {
@@ -19,35 +19,49 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    public List<Task> findAll() {
-        return taskRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<TaskResponseDTO> findAll() {
+        return taskRepository.findAll().stream()
+                .map(TaskResponseDTO::fromEntity)
+                .toList();
     }
 
-    public Optional<Task> findById(Long id) {
-        return taskRepository.findById(id);
+    @Transactional(readOnly = true)
+    public TaskResponseDTO findById(Long id) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Tarefa com ID " + id + " não encontrada."));
+        return TaskResponseDTO.fromEntity(task);
     }
 
     @Transactional
-    public Task save(TaskRequestDTO data) {
+    public TaskResponseDTO save(TaskRequestDTO data) {
         Task task = new Task();
-        BeanUtils.copyProperties(data, task);
-        return taskRepository.save(task);
+        task.setTitle(data.title());
+        task.setDescription(data.description());
+        task.setCompleted(data.completed());
+        
+        Task savedTask = taskRepository.save(task);
+        return TaskResponseDTO.fromEntity(savedTask);
     }
 
     @Transactional
-    public Optional<Task> update(Long id, TaskRequestDTO data) {
-        return taskRepository.findById(id).map(existingTask -> {
-            BeanUtils.copyProperties(data, existingTask, "id"); // "id" é ignorado para não sobrescrever
-            return taskRepository.save(existingTask);
-        });
+    public TaskResponseDTO update(Long id, TaskRequestDTO data) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Impossível atualizar. Tarefa com ID " + id + " não encontrada."));
+        
+        task.setTitle(data.title());
+        task.setDescription(data.description());
+        task.setCompleted(data.completed());
+        
+        Task updatedTask = taskRepository.save(task);
+        return TaskResponseDTO.fromEntity(updatedTask);
     }
 
     @Transactional
-    public boolean delete(Long id) {
-        if (taskRepository.existsById(id)) {
-            taskRepository.deleteById(id);
-            return true;
+    public void delete(Long id) {
+        if (!taskRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Impossível deletar. Tarefa com ID " + id + " não encontrada.");
         }
-        return false;
+        taskRepository.deleteById(id);
     }
 }
